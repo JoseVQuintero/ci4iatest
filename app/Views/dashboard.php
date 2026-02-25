@@ -129,21 +129,21 @@
         'categoriesChart',
         categoryRows.map(item => item.category_name),
         categoryRows.map(item => Number(item.total)),
-        '#17a2b8'
+        '#1f5db9'
     );
 
     buildBarChart(
         'brandsChart',
         brandRows.map(item => item.brand_name),
         brandRows.map(item => Number(item.total)),
-        '#28a745'
+        '#2f6fcb'
     );
 
     buildBarChart(
         'pricesChart',
         priceRangeRows.map(item => item.price_range),
         priceRangeRows.map(item => Number(item.total)),
-        '#ffc107'
+        '#5b8fdb'
     );
 
     const statusCanvas = document.getElementById('statusChart');
@@ -158,7 +158,7 @@
                         Number(stats.inactive_products || 0),
                         Number(stats.stock_out || 0)
                     ],
-                    backgroundColor: ['#28a745', '#6c757d', '#dc3545']
+                    backgroundColor: ['#2f6fcb', '#789ccf', '#1f5db9']
                 }]
             },
             options: {
@@ -169,4 +169,3 @@
     }
 </script>
 <?= $this->endSection() ?>
-
