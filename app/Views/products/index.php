@@ -229,7 +229,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-8">
                                 <label for="availableCategories">Select or Create Category</label>
-                                <select id="availableCategories" class="form-control">
+                                <select id="availableCategories" class="form-control" >
                                     <option value="">-- Select a category --</option>
                                 </select>
                             </div>
@@ -277,6 +277,9 @@
     .modal-backdrop.modal-stack {
         opacity: 0.5;
     }
+    .select2-container--open {
+        z-index: 2000;
+    }
 </style>
 <script>
     let table;
@@ -303,7 +306,7 @@
             closeOnSelect: false,
         });
 
-        //initAvailableCategoriesSelect2();
+        initAvailableCategoriesSelect2();
 
         // Bootstrap modal stacking with z-index
         $(document).on('show.bs.modal', '.modal', function() {
@@ -539,19 +542,19 @@
     }
 
     function populateAvailableCategories() {
-        const select = document.getElementById('availableCategories');
-        let html = '<option value="">-- Select a category --</option>';
-
+        const $select = $('#availableCategories');
+        $select.empty();
+        $select.append(new Option('-- Select a category --', ''));
+                                    
         allAvailableCategories.forEach(category => {
             const categoryId = toCategoryId(category.id);
             // Don't show categories already assigned
-            if (categoryId !== null && !currentProductCategories.includes(categoryId)) {
-                html += `<option value="${categoryId}">${category.name}</option>`;
-            }
+            
+                $select.append(new Option(category.name, String(categoryId)));
+            
         });
 
-        select.innerHTML = html;
-        $('#availableCategories').trigger('change.select2');
+        $select.val('').trigger('change');
     }
 
     function addCategoryToProduct() {
@@ -614,7 +617,7 @@
                     populateAvailableCategories();
 
                     // Auto-select the newly created category
-                    document.getElementById('availableCategories').value = String(newCategory.id);
+                    $('#availableCategories').val(String(newCategory.id)).trigger('change');
 
                     // Clear form
                     document.getElementById('newCategoryName').value = '';
@@ -684,7 +687,6 @@
             width: '100%',
             placeholder: '-- Select a category --',
             allowClear: true,
-            dropdownParent: $('#categoriesModal')
         });
     }
 </script>
