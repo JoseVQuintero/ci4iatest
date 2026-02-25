@@ -51,9 +51,9 @@ class Dashboard extends BaseController
         $avgPrice = $totalProducts > 0 ? round($totalPrice / $totalProducts, 2) : 0;
 
         $brandRows = $db->table('products')
-            ->select("COALESCE(NULLIF(TRIM(brand), ''), 'Sin marca') as brand_name, COUNT(*) as total", false)
+            ->select("COALESCE(NULLIF(TRIM(brand), ''), '" . addslashes(lang('App.no_brand')) . "') as brand_name, COUNT(*) as total", false)
             ->where('user_id', $userId)
-            ->groupBy("COALESCE(NULLIF(TRIM(brand), ''), 'Sin marca')", false)
+            ->groupBy("COALESCE(NULLIF(TRIM(brand), ''), '" . addslashes(lang('App.no_brand')) . "')", false)
             ->orderBy('total', 'DESC')
             ->limit(10)
             ->get()
@@ -88,7 +88,7 @@ class Dashboard extends BaseController
             ->getResultArray();
 
         return view('dashboard', [
-            'title' => 'Dashboard',
+            'title' => lang('App.dashboard'),
             'stats' => [
                 'total_products' => $totalProducts,
                 'active_products' => $activeProducts,

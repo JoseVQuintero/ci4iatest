@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<?php
+$currentLocale = service('request')->getLocale();
+$switchLocale = $currentLocale === 'es-MX' ? 'en' : 'es-MX';
+$switchLabel = $currentLocale === 'es-MX' ? 'EN' : 'ES-MX';
+?>
+<html lang="<?= esc($currentLocale) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($title) ? esc($title) : 'Authentication' ?></title>
+    <title><?= isset($title) ? esc($title) : lang('App.authentication') ?></title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" />
@@ -120,11 +125,28 @@
         hr {
             border-color: rgba(195, 214, 241, 0.28);
         }
+        .lang-switch {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 2;
+        }
+        .lang-switch .btn {
+            border: 1px solid rgba(201, 218, 243, 0.35);
+            background: linear-gradient(145deg, rgba(222, 235, 255, 0.18), rgba(127, 162, 212, 0.22));
+            color: var(--metal-100);
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
+    <div class="lang-switch">
+        <a href="<?= site_url('lang/' . $switchLocale) ?>" class="btn btn-sm" title="<?= esc(lang('App.change_language')) ?>">
+            <i class="fas fa-globe-americas mr-1"></i><?= esc($switchLabel) ?>
+        </a>
+    </div>
     <div class="auth-container">
-        <h2 class="auth-title"><?= isset($title) ? esc($title) : 'Welcome' ?></h2>
+        <h2 class="auth-title"><?= isset($title) ? esc($title) : lang('App.welcome') ?></h2>
         <?= $this->renderSection('content') ?>
     </div>
 

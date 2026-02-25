@@ -19,7 +19,7 @@ class Auth extends BaseController
 
     public function register()
     {
-        return view('auth/register', ['title' => 'Create Account']);
+        return view('auth/register', ['title' => lang('App.create_account')]);
     }
 
     public function store()
@@ -74,7 +74,7 @@ class Auth extends BaseController
 
     public function login()
     {
-        return view('auth/login', ['title' => 'Sign In']);
+        return view('auth/login', ['title' => lang('App.sign_in')]);
     }
 
     public function attempt()
@@ -84,7 +84,7 @@ class Auth extends BaseController
 
         $user = $this->userModel->where('email', $email)->first();
         if (! $user || empty($user['password_hash']) || ! password_verify($password, $user['password_hash'])) {
-            return redirect()->back()->withInput()->with('error', 'Invalid credentials');
+            return redirect()->back()->withInput()->with('error', lang('App.invalid_credentials'));
         }
 
         $this->session->set('user_id', $user['id']);
@@ -95,7 +95,11 @@ class Auth extends BaseController
 
     public function logout()
     {
+        $locale = $this->session->get('site_locale');
         $this->session->destroy();
+        if (! empty($locale)) {
+            session()->set('site_locale', $locale);
+        }
         return redirect()->to('/login');
     }
 

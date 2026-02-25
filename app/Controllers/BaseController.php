@@ -35,7 +35,7 @@ abstract class BaseController extends Controller
      *
      * @var list<string>
      */
-    protected $helpers = [];
+    protected $helpers = ['url'];
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
@@ -54,5 +54,13 @@ abstract class BaseController extends Controller
         // Preload any models, libraries, etc, here.
 
         // E.g.: $this->session = \Config\Services::session();
+        $session = session();
+        $locale = $session->get('site_locale');
+        $supportedLocales = config('App')->supportedLocales;
+
+        if (is_string($locale) && in_array($locale, $supportedLocales, true)) {
+            $request->setLocale($locale);
+            service('language')->setLocale($locale);
+        }
     }
 }

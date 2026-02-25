@@ -1,9 +1,14 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<?php
+$currentLocale = service('request')->getLocale();
+$switchLocale = $currentLocale === 'es-MX' ? 'en' : 'es-MX';
+$switchLabel = $currentLocale === 'es-MX' ? 'EN' : 'ES-MX';
+?>
+<html lang="<?= esc($currentLocale) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($title) ? esc($title) : 'Dashboard' ?></title>
+    <title><?= isset($title) ? esc($title) : lang('App.dashboard') ?></title>
     <!-- AdminLTE CSS via CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css" crossorigin="anonymous" />
     <!-- Font Awesome -->
@@ -142,6 +147,15 @@
             border-top: 1px solid #c5d4e7;
             color: #23426e;
         }
+
+        .lang-switch-link {
+            border: 1px solid rgba(178, 202, 236, 0.38);
+            border-radius: 999px;
+            padding: 0.25rem 0.75rem !important;
+            margin-right: 0.5rem;
+            background: linear-gradient(145deg, rgba(209, 226, 250, 0.16), rgba(112, 149, 204, 0.22));
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -154,23 +168,28 @@
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="<?= site_url('/') ?>" class="nav-link">Home</a>
+                <a href="<?= site_url('/') ?>" class="nav-link"><?= esc(lang('App.home')) ?></a>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a href="<?= site_url('lang/' . $switchLocale) ?>" class="nav-link lang-switch-link" title="<?= esc(lang('App.change_language')) ?>">
+                    <i class="fas fa-globe-americas mr-1"></i><?= esc($switchLabel) ?>
+                </a>
+            </li>
             <?php if(session()->get('user_id')): ?>
                 <li class="nav-item">
-                    <span class="nav-link">Hello, <?= esc(session()->get('user_name')) ?></span>
+                    <span class="nav-link"><?= esc(lang('App.hello_user', [session()->get('user_name')])) ?></span>
                 </li>
                 <li class="nav-item">
-                    <a href="<?= site_url('logout') ?>" class="nav-link">Logout</a>
+                    <a href="<?= site_url('logout') ?>" class="nav-link"><?= esc(lang('App.logout')) ?></a>
                 </li>
             <?php else: ?>
                 <li class="nav-item">
-                    <a href="<?= site_url('login') ?>" class="nav-link">Login</a>
+                    <a href="<?= site_url('login') ?>" class="nav-link"><?= esc(lang('App.login')) ?></a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?= site_url('register') ?>" class="nav-link">Register</a>
+                    <a href="<?= site_url('register') ?>" class="nav-link"><?= esc(lang('App.register')) ?></a>
                 </li>
             <?php endif; ?>
         </ul>
@@ -181,7 +200,7 @@
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
         <a href="<?= site_url('/') ?>" class="brand-link">
-            <span class="brand-text font-weight-light">CI4 Admin</span>
+            <span class="brand-text font-weight-light"><?= esc(lang('App.admin_panel')) ?></span>
         </a>
         <!-- Sidebar -->
         <div class="sidebar">
@@ -191,13 +210,13 @@
                     <li class="nav-item">
                         <a href="<?= site_url('dashboard') ?>" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
-                            <p>Dashboard</p>
+                            <p><?= esc(lang('App.dashboard')) ?></p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?= site_url('products') ?>" class="nav-link">
                             <i class="nav-icon fas fa-box"></i>
-                            <p>Products</p>
+                            <p><?= esc(lang('App.products')) ?></p>
                         </a>
                     </li>
                 </ul>
@@ -214,7 +233,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0"><?= isset($title) ? esc($title) : 'Dashboard' ?></h1>
+                        <h1 class="m-0"><?= isset($title) ? esc($title) : lang('App.dashboard') ?></h1>
                     </div>
                 </div>
             </div>
@@ -232,7 +251,7 @@
     <!-- /.content-wrapper -->
 
     <footer class="main-footer">
-        <strong>Copyright &copy; <?= date('Y') ?> <a href="#">Your Company</a>.</strong> All rights reserved.
+        <strong><?= esc(lang('App.copyright')) ?> &copy; <?= date('Y') ?> <a href="#"><?= esc(lang('App.your_company')) ?></a>.</strong> <?= esc(lang('App.all_rights_reserved')) ?>
     </footer>
 </div>
 <!-- ./wrapper -->

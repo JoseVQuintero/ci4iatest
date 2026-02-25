@@ -22,7 +22,7 @@
                     <?php endif; ?>
 
                     <div class="form-group">
-                        <label for="name">Product Name *</label>
+                        <label for="name"><?= esc(lang('App.product_name')) ?> *</label>
                         <input type="text" name="name" id="name" class="form-control" value="<?= old('name') ?>" required>
                     </div>
 
@@ -32,40 +32,40 @@
                             <input type="text" name="sku" id="sku" class="form-control" value="<?= old('sku') ?>" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="brand">Brand</label>
+                            <label for="brand"><?= esc(lang('App.brand')) ?></label>
                             <input type="text" name="brand" id="brand" class="form-control" value="<?= old('brand') ?>">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="price">Price *</label>
+                            <label for="price"><?= esc(lang('App.price')) ?> *</label>
                             <input type="number" name="price" id="price" class="form-control" step="0.01" value="<?= old('price') ?>" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="offer_price">Offer Price</label>
+                            <label for="offer_price"><?= esc(lang('App.offer_price')) ?></label>
                             <input type="number" name="offer_price" id="offer_price" class="form-control" step="0.01" value="<?= old('offer_price') ?>">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="type">Type</label>
+                            <label for="type"><?= esc(lang('App.type')) ?></label>
                             <input type="text" name="type" id="type" class="form-control" value="<?= old('type') ?>">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="stock">Stock</label>
+                            <label for="stock"><?= esc(lang('App.stock')) ?></label>
                             <input type="number" name="stock" id="stock" class="form-control" value="<?= old('stock') ?? 0 ?>">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Description</label>
+                        <label for="description"><?= esc(lang('App.description')) ?></label>
                         <textarea name="description" id="description" class="form-control" rows="4"><?= old('description') ?></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="categories">Categories</label>
+                        <label for="categories"><?= esc(lang('App.categories')) ?></label>
                         <select name="categories[]" id="categories" class="form-control" multiple>
                             <?php foreach ($categories as $category): ?>
                                 <option value="<?= $category['id'] ?>"><?= esc($category['name']) ?></option>
@@ -74,21 +74,21 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="image">Product Image</label>
+                        <label for="image"><?= esc(lang('App.product_image')) ?></label>
                         <input type="file" name="image" id="image" class="form-control" accept="image/*">
                     </div>
 
                     <div class="form-group">
-                        <label for="status">Status</label>
+                        <label for="status"><?= esc(lang('App.status')) ?></label>
                         <select name="status" id="status" class="form-control">
-                            <option value="active" <?= old('status') === 'active' ? 'selected' : '' ?>>Active</option>
-                            <option value="inactive" <?= old('status') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
+                            <option value="active" <?= old('status') === 'active' ? 'selected' : '' ?>><?= esc(lang('App.active')) ?></option>
+                            <option value="inactive" <?= old('status') === 'inactive' ? 'selected' : '' ?>><?= esc(lang('App.inactive')) ?></option>
                         </select>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button type="submit" class="btn btn-primary">Save Product</button>
-                    <a href="<?= site_url('products') ?>" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary"><?= esc(lang('App.save_product')) ?></button>
+                    <a href="<?= site_url('products') ?>" class="btn btn-secondary"><?= esc(lang('App.cancel')) ?></a>
                 </div>
             </form>
         </div>

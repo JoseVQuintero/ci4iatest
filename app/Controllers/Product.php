@@ -35,7 +35,7 @@ class Product extends BaseController
 
         $categories = $this->categoryModel->findAll();
         return view('products/index', [
-            'title' => 'Products',
+            'title' => lang('App.products'),
             'products' => $products,
             'categories' => $categories,
         ]);
@@ -45,7 +45,7 @@ class Product extends BaseController
     {
         $categories = $this->categoryModel->findAll();
         return view('products/create', [
-            'title' => 'Create Product',
+            'title' => lang('App.create_product'),
             'categories' => $categories,
         ]);
     }
@@ -141,11 +141,11 @@ class Product extends BaseController
         if ($this->request->isAJAX()) {
             return $this->response->setJSON([
                 'success' => true,
-                'message' => 'Product created successfully',
+                'message' => lang('App.product_created_successfully'),
             ]);
         }
 
-        return redirect()->to('products')->with('success', 'Product created successfully');
+        return redirect()->to('products')->with('success', lang('App.product_created_successfully'));
     }
 
     public function edit($id)
@@ -154,9 +154,9 @@ class Product extends BaseController
         $product = $this->productModel->where('id', $id)->where('user_id', $userId)->first();
         if (! $product) {
             if ($this->request->isAJAX()) {
-                return $this->response->setJSON(['success' => false, 'message' => 'Product not found or unauthorized']);
+                return $this->response->setJSON(['success' => false, 'message' => lang('App.product_not_found_or_unauthorized')]);
             }
-            return redirect()->to('products')->with('error', 'Product not found or unauthorized');
+            return redirect()->to('products')->with('error', lang('App.product_not_found_or_unauthorized'));
         }
 
         $productCategories = $this->productModel->getCategories($id);
@@ -175,7 +175,7 @@ class Product extends BaseController
 
         $categories = $this->categoryModel->findAll();
         return view('products/edit', [
-            'title' => 'Edit Product',
+            'title' => lang('App.edit_product'),
             'product' => $product,
             'categories' => $categories,
             'categoryIds' => $categoryIds,
@@ -194,10 +194,10 @@ class Product extends BaseController
             if ($this->request->isAJAX()) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'errors' => ['Product not found or unauthorized'],
+                    'errors' => [lang('App.product_not_found_or_unauthorized')],
                 ]);
             }
-            return redirect()->to('products')->with('error', 'Product not found or unauthorized');
+            return redirect()->to('products')->with('error', lang('App.product_not_found_or_unauthorized'));
         }
 
         $name     = $this->request->getPost('name');
@@ -286,11 +286,11 @@ class Product extends BaseController
         if ($this->request->isAJAX()) {
             return $this->response->setJSON([
                 'success' => true,
-                'message' => 'Product updated successfully',
+                'message' => lang('App.product_updated_successfully'),
             ]);
         }
 
-        return redirect()->to('products')->with('success', 'Product updated successfully');
+        return redirect()->to('products')->with('success', lang('App.product_updated_successfully'));
     }
 
     public function delete($id)
@@ -298,7 +298,7 @@ class Product extends BaseController
         $userId = session()->get('user_id');
         $product = $this->productModel->where('id', $id)->where('user_id', $userId)->first();
         if (! $product) {
-            return redirect()->to('products')->with('error', 'Product not found or unauthorized');
+            return redirect()->to('products')->with('error', lang('App.product_not_found_or_unauthorized'));
         }
 
         if ($product['image'] && file_exists(FCPATH . 'uploads/products/' . $product['image'])) {
@@ -308,7 +308,7 @@ class Product extends BaseController
         $this->productModel->db->table('product_category')->where('product_id', $id)->delete();
         $this->productModel->delete($id);
 
-        return redirect()->to('products')->with('success', 'Product deleted successfully');
+        return redirect()->to('products')->with('success', lang('App.product_deleted_successfully'));
     }
 
     public function image($id)
@@ -358,21 +358,21 @@ class Product extends BaseController
         }
 
         if ($image->getSize() > self::MAX_IMAGE_SIZE) {
-            $result['error'] = 'Image exceeds maximum size of 5MB';
+            $result['error'] = lang('App.image_size_exceeded');
             return $result;
         }
 
         $mime = $image->getMimeType();
         $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (! in_array($mime, $allowed, true)) {
-            $result['error'] = 'Invalid image format. Allowed: JPG, PNG, GIF, WEBP';
+            $result['error'] = lang('App.invalid_image_format');
             return $result;
         }
 
         $tempPath = $image->getTempName();
         $content = @file_get_contents($tempPath);
         if ($content === false) {
-            $result['error'] = 'Unable to read uploaded image';
+            $result['error'] = lang('App.unable_to_read_uploaded_image');
             return $result;
         }
 

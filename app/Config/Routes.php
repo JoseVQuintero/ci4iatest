@@ -44,6 +44,7 @@ $routes->get('auth/google', 'Auth::socialRedirect/google');
 $routes->get('auth/google/callback', 'Auth::socialCallback/google');
 $routes->get('auth/github', 'Auth::socialRedirect/github');
 $routes->get('auth/github/callback', 'Auth::socialCallback/github');
+$routes->get('lang/(:segment)', 'Language::switch/$1');
 
 // Protected routes (require auth filter)
 $routes->get('dashboard', 'Dashboard::index', ['filter' => 'auth']);

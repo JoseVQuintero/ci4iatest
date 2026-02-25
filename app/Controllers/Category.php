@@ -33,7 +33,7 @@ class Category extends BaseController
         if (!$product) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Product not found or unauthorized'
+                'message' => lang('App.product_not_found_or_unauthorized')
             ]);
         }
 
@@ -84,7 +84,7 @@ class Category extends BaseController
         if (!$this->categoryModel->skipValidation(true)->save($saveData)) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Unable to create category',
+                'message' => lang('App.unable_to_create_category'),
             ]);
         }
 
@@ -92,7 +92,7 @@ class Category extends BaseController
 
         return $this->response->setJSON([
             'success' => true,
-            'message' => 'Category created successfully',
+            'message' => lang('App.category_created_successfully'),
             'category' => [
                 'id' => $categoryId,
                 'name' => $name,
@@ -118,7 +118,7 @@ class Category extends BaseController
         if (!$product) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Product not found or unauthorized'
+                'message' => lang('App.product_not_found_or_unauthorized')
             ]);
         }
 
@@ -144,7 +144,7 @@ class Category extends BaseController
 
         return $this->response->setJSON([
             'success' => true,
-            'message' => 'Product categories updated successfully',
+            'message' => lang('App.product_categories_updated_successfully'),
             'product_categories' => $productCategories,
         ]);
     }

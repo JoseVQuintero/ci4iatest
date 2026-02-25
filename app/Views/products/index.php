@@ -9,7 +9,7 @@
                 <h3 class="card-title"><?= esc($title) ?></h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#productModal" onclick="resetForm()">
-                        <i class="fas fa-plus"></i> New Product
+                        <i class="fas fa-plus"></i> <?= esc(lang('App.new_product')) ?>
                     </button>
                 </div>
             </div>
@@ -32,15 +32,15 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Image</th>
-                            <th>Name</th>
+                            <th><?= esc(lang('App.image')) ?></th>
+                            <th><?= esc(lang('App.name')) ?></th>
                             <th>SKU</th>
-                            <th>Brand</th>
-                            <th>Price</th>
-                            <th>Offer Price</th>
-                            <th>Stock</th>
-                            <th>Status</th>
-                            <th style="width: 200px;">Actions</th>
+                            <th><?= esc(lang('App.brand')) ?></th>
+                            <th><?= esc(lang('App.price')) ?></th>
+                            <th><?= esc(lang('App.offer_price')) ?></th>
+                            <th><?= esc(lang('App.stock')) ?></th>
+                            <th><?= esc(lang('App.status')) ?></th>
+                            <th style="width: 200px;"><?= esc(lang('App.actions')) ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,7 +51,7 @@
                                     <?php if (!empty($product['has_image'])): ?>
                                         <img src="<?= site_url('products/' . $product['id'] . '/image') ?>" alt="<?= esc($product['name']) ?>" style="max-width: 60px; max-height: 60px; border-radius: 4px;">
                                     <?php else: ?>
-                                        <span class="text-muted">No image</span>
+                                        <span class="text-muted"><?= esc(lang('App.no_image')) ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td><?= esc($product['name']) ?></td>
@@ -72,7 +72,7 @@
                                 </td>
                                 <td>
                                     <span class="badge badge-<?= $product['status'] === 'active' ? 'success' : 'warning' ?>">
-                                        <?= ucfirst($product['status']) ?>
+                                        <?= esc($product['status'] === 'active' ? lang('App.active') : lang('App.inactive')) ?>
                                     </span>
                                 </td>
                                 <td>
@@ -100,7 +100,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="productModalLabel">Create Product</h5>
+                <h5 class="modal-title" id="productModalLabel"><?= esc(lang('App.create_product')) ?></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -113,7 +113,7 @@
                     <div id="formErrors" class="alert alert-danger" style="display:none;"></div>
 
                     <div class="form-group">
-                        <label for="name">Product Name *</label>
+                        <label for="name"><?= esc(lang('App.product_name')) ?> *</label>
                         <input type="text" name="name" id="name" class="form-control" required>
                     </div>
 
@@ -123,40 +123,40 @@
                             <input type="text" name="sku" id="sku" class="form-control" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="brand">Brand</label>
+                            <label for="brand"><?= esc(lang('App.brand')) ?></label>
                             <input type="text" name="brand" id="brand" class="form-control">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="price">Price *</label>
+                            <label for="price"><?= esc(lang('App.price')) ?> *</label>
                             <input type="number" name="price" id="price" class="form-control" step="0.01" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="offer_price">Offer Price</label>
+                            <label for="offer_price"><?= esc(lang('App.offer_price')) ?></label>
                             <input type="number" name="offer_price" id="offer_price" class="form-control" step="0.01">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="type">Type</label>
+                            <label for="type"><?= esc(lang('App.type')) ?></label>
                             <input type="text" name="type" id="type" class="form-control">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="stock">Stock</label>
+                            <label for="stock"><?= esc(lang('App.stock')) ?></label>
                             <input type="number" name="stock" id="stock" class="form-control" value="0">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Description</label>
+                        <label for="description"><?= esc(lang('App.description')) ?></label>
                         <textarea name="description" id="description" class="form-control" rows="3"></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="categories">Categories</label>
+                        <label for="categories"><?= esc(lang('App.categories')) ?></label>
                         <div class="input-group">
                             <select name="categories[]" id="categories" class="form-control" multiple="multiple">
                                 <?php foreach ($categories ?? [] as $category): ?>
@@ -164,7 +164,7 @@
                                 <?php endforeach; ?>
                             </select>
                             <div class="input-group-append">
-                                <button type="button" class="btn btn-info" id="manageCategoriesBtn" title="Manage Categories" onclick="openManageCategoriesFromProductForm()">
+                                <button type="button" class="btn btn-info" id="manageCategoriesBtn" title="<?= esc(lang('App.manage_categories')) ?>" onclick="openManageCategoriesFromProductForm()">
                                     <i class="fas fa-tags"></i>
                                 </button>
                             </div>
@@ -172,26 +172,26 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="image">Product Image</label>
+                        <label for="image"><?= esc(lang('App.product_image')) ?></label>
                         <input type="file" name="image" id="image" class="form-control" accept="image/*">
-                        <small class="form-text text-muted">Formats: JPG, PNG, GIF. Max size: 5MB</small>
+                        <small class="form-text text-muted"><?= esc(lang('App.image_formats_help')) ?></small>
                         <div id="imagePreview" class="mt-3" style="display: none;">
-                            <p><strong>Current/Preview Image:</strong></p>
+                            <p><strong><?= esc(lang('App.current_preview_image')) ?></strong></p>
                             <img id="previewImg" src="" alt="Preview" style="max-width: 250px; max-height: 250px; border-radius: 4px; border: 1px solid #ddd; padding: 5px;">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="status">Status</label>
+                        <label for="status"><?= esc(lang('App.status')) ?></label>
                         <select name="status" id="status" class="form-control">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
+                            <option value="active"><?= esc(lang('App.active')) ?></option>
+                            <option value="inactive"><?= esc(lang('App.inactive')) ?></option>
                         </select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Product</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= esc(lang('App.cancel')) ?></button>
+                    <button type="submit" class="btn btn-primary"><?= esc(lang('App.save_product')) ?></button>
                 </div>
             </form>
         </div>
@@ -203,7 +203,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="categoriesModalLabel">Manage Categories</h5>
+                <h5 class="modal-title" id="categoriesModalLabel"><?= esc(lang('App.manage_categories')) ?></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -214,7 +214,7 @@
 
                 <!-- Current categories -->
                 <div class="mb-4">
-                    <h6>Current Categories</h6>
+                    <h6><?= esc(lang('App.current_categories')) ?></h6>
                     <div id="currentCategoriesList" class="mb-3">
                         <!-- Dynamically populated -->
                     </div>
@@ -223,44 +223,44 @@
                 <!-- Add new category section -->
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="mb-0">Add Category to Product</h6>
+                        <h6 class="mb-0"><?= esc(lang('App.add_category_to_product')) ?></h6>
                     </div>
                     <div class="card-body">
                         <div class="form-row">
                             <div class="form-group col-md-8">
-                                <label for="availableCategories">Select or Create Category</label>
+                                <label for="availableCategories"><?= esc(lang('App.select_or_create_category')) ?></label>
                                 <select id="availableCategories" class="form-control" >
-                                    <option value="">-- Select a category --</option>
+                                    <option value=""><?= esc(lang('App.select_category_placeholder')) ?></option>
                                 </select>
                             </div>
                             <div class="form-group col-md-4">
                                 <label>&nbsp;</label>
                                 <button type="button" class="btn btn-primary btn-block" onclick="addCategoryToProduct()">
-                                    <i class="fas fa-plus"></i> Add
+                                    <i class="fas fa-plus"></i> <?= esc(lang('App.add')) ?>
                                 </button>
                             </div>
                         </div>
 
                         <hr>
 
-                        <h6 class="mb-3">Create New Category</h6>
+                        <h6 class="mb-3"><?= esc(lang('App.create_new_category')) ?></h6>
                         <div class="form-group">
-                            <label for="newCategoryName">Category Name</label>
-                            <input type="text" id="newCategoryName" class="form-control" placeholder="Enter category name">
+                            <label for="newCategoryName"><?= esc(lang('App.category_name')) ?></label>
+                            <input type="text" id="newCategoryName" class="form-control" placeholder="<?= esc(lang('App.enter_category_name')) ?>">
                         </div>
                         <div class="form-group">
-                            <label for="newCategoryDesc">Description (optional)</label>
-                            <textarea id="newCategoryDesc" class="form-control" rows="2" placeholder="Category description"></textarea>
+                            <label for="newCategoryDesc"><?= esc(lang('App.description_optional')) ?></label>
+                            <textarea id="newCategoryDesc" class="form-control" rows="2" placeholder="<?= esc(lang('App.category_description')) ?>"></textarea>
                         </div>
                         <button type="button" class="btn btn-success btn-block" onclick="createNewCategory()">
-                            <i class="fas fa-plus-circle"></i> Create New Category
+                            <i class="fas fa-plus-circle"></i> <?= esc(lang('App.create_new_category')) ?>
                         </button>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="saveProductCategories()">Save Changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= esc(lang('App.close')) ?></button>
+                <button type="button" class="btn btn-primary" onclick="saveProductCategories()"><?= esc(lang('App.save_changes')) ?></button>
             </div>
         </div>
     </div>
@@ -284,6 +284,26 @@
 <script>
     let table;
     let categories = <?= json_encode($categories ?? []) ?>;
+    const i18n = {
+        createProduct: <?= json_encode(lang('App.create_product')) ?>,
+        editProduct: <?= json_encode(lang('App.edit_product')) ?>,
+        selectCategoryPlaceholder: <?= json_encode(lang('App.select_category_placeholder')) ?>,
+        noCategoriesAssignedYet: <?= json_encode(lang('App.no_categories_assigned_yet')) ?>,
+        saveProductFirst: <?= json_encode(lang('App.save_product_first_then_manage_categories')) ?>,
+        errorLoadingProduct: <?= json_encode(lang('App.error_loading_product')) ?>,
+        errorLoadingCategories: <?= json_encode(lang('App.error_loading_categories')) ?>,
+        selectCategoryPlease: <?= json_encode(lang('App.please_select_category')) ?>,
+        categoryNameRequired: <?= json_encode(lang('App.category_name_required')) ?>,
+        categoryCreatedSuccess: <?= json_encode(lang('App.category_created_successfully')) ?>,
+        errorCreatingCategory: <?= json_encode(lang('App.error_creating_category')) ?>,
+        errorSavingCategories: <?= json_encode(lang('App.error_saving_categories')) ?>,
+        confirmDeleteProduct: <?= json_encode(lang('App.confirm_delete_product')) ?>,
+        manageCategoriesFor: <?= json_encode(lang('App.manage_categories_for')) ?>,
+        productFallback: <?= json_encode(lang('App.product')) ?>,
+        selectCategories: <?= json_encode(lang('App.select_categories')) ?>,
+        active: <?= json_encode(lang('App.active')) ?>,
+        inactive: <?= json_encode(lang('App.inactive')) ?>
+    };
 
     $(document).ready(function() {
         table = $('#productsTable').DataTable({
@@ -302,7 +322,7 @@
         $('#categories').select2({
             theme: 'classic',
             width: '80%',
-            placeholder: 'Select categories',
+            placeholder: i18n.selectCategories,
             closeOnSelect: false,
         });
 
@@ -348,7 +368,7 @@
         document.getElementById('productForm').reset();
         document.getElementById('isEdit').value = 'false';
         document.getElementById('productId').value = '';
-        document.getElementById('productModalLabel').textContent = 'Create Product';
+        document.getElementById('productModalLabel').textContent = i18n.createProduct;
         document.getElementById('formErrors').style.display = 'none';
         document.getElementById('imagePreview').style.display = 'none';
         document.getElementById('previewImg').src = '';
@@ -366,7 +386,7 @@
                     const product = data.product;
                     document.getElementById('productId').value = product.id;
                     document.getElementById('isEdit').value = 'true';
-                    document.getElementById('productModalLabel').textContent = 'Edit Product';
+                    document.getElementById('productModalLabel').textContent = i18n.editProduct;
                     document.getElementById('name').value = product.name;
                     document.getElementById('sku').value = product.sku;
                     document.getElementById('sku').setAttribute('readonly', 'readonly');
@@ -398,7 +418,7 @@
                 }
             },
             error: function(xhr) {
-                alert('Error loading product');
+                alert(i18n.errorLoadingProduct);
             }
         });
     }
@@ -454,17 +474,17 @@
     }
 
     function deleteProduct(productId) {
-        if (confirm('Are you sure you want to delete this product?')) {
+        if (confirm(i18n.confirmDeleteProduct)) {
             window.location.href = '<?= site_url('products') ?>/' + productId + '/delete';
         }
     }
 
     function openManageCategoriesFromProductForm() {
         const productId = document.getElementById('productId').value;
-        const productName = document.getElementById('name').value || 'Product';
+        const productName = document.getElementById('name').value || i18n.productFallback;
 
         if (!productId) {
-            alert('Save the product first, then manage categories.');
+            alert(i18n.saveProductFirst);
             return;
         }
 
@@ -482,7 +502,7 @@
 
     function openCategoriesModal(productId, productName) {
         document.getElementById('currentProductId').value = productId;
-        document.getElementById('categoriesModalLabel').textContent = 'Manage Categories - ' + productName;
+        document.getElementById('categoriesModalLabel').textContent = i18n.manageCategoriesFor + ' - ' + productName;
         document.getElementById('categoriesErrors').style.display = 'none';
         document.getElementById('newCategoryName').value = '';
         document.getElementById('newCategoryDesc').value = '';
@@ -512,7 +532,7 @@
                 }
             },
             error: function(xhr) {
-                alert('Error loading categories');
+                alert(i18n.errorLoadingCategories);
             }
         });
     }
@@ -521,7 +541,7 @@
         const container = document.getElementById('currentCategoriesList');
 
         if (currentProductCategories.length === 0) {
-            container.innerHTML = '<p class="text-muted">No categories assigned yet</p>';
+            container.innerHTML = '<p class="text-muted">' + i18n.noCategoriesAssignedYet + '</p>';
             return;
         }
 
@@ -544,7 +564,7 @@
     function populateAvailableCategories() {
         const $select = $('#availableCategories');
         $select.empty();
-        $select.append(new Option('-- Select a category --', ''));
+        $select.append(new Option(i18n.selectCategoryPlaceholder, ''));
                                     
         allAvailableCategories.forEach(category => {
             const categoryId = toCategoryId(category.id);
@@ -561,7 +581,7 @@
         const categoryId = toCategoryId(document.getElementById('availableCategories').value);
 
         if (categoryId === null) {
-            showCategoryError('Please select a category');
+            showCategoryError(i18n.selectCategoryPlease);
             return;
         }
 
@@ -589,7 +609,7 @@
         const description = document.getElementById('newCategoryDesc').value.trim();
 
         if (!name) {
-            showCategoryError('Category name is required');
+            showCategoryError(i18n.categoryNameRequired);
             return;
         }
 
@@ -625,9 +645,9 @@
                     document.getElementById('categoriesErrors').style.display = 'none';
 
                     // Show success message
-                    alert('Category created successfully!');
+                    alert(i18n.categoryCreatedSuccess);
                 } else {
-                    showCategoryError(response.message || 'Error creating category');
+                    showCategoryError(response.message || i18n.errorCreatingCategory);
                 }
             },
             error: function(xhr) {
@@ -640,7 +660,7 @@
                     errorHtml += '</ul>';
                     document.getElementById('categoriesErrors').innerHTML = errorHtml;
                 } else {
-                    showCategoryError('Error creating category');
+                    showCategoryError(i18n.errorCreatingCategory);
                 }
                 document.getElementById('categoriesErrors').style.display = 'block';
             }
@@ -665,7 +685,7 @@
                 }
             },
             error: function(xhr) {
-                showCategoryError('Error saving categories');
+                showCategoryError(i18n.errorSavingCategories);
             }
         });
     }
@@ -685,7 +705,7 @@
         $availableCategories.select2({
             theme: 'classic',
             width: '100%',
-            placeholder: '-- Select a category --',
+            placeholder: i18n.selectCategoryPlaceholder,
             allowClear: true,
         });
     }
