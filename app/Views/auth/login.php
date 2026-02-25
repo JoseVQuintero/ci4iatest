@@ -22,6 +22,14 @@
 </form>
 
 <hr>
+<a href="<?= site_url('auth/google') ?>" class="btn btn-danger btn-block">
+    <i class="fab fa-google mr-2"></i> Continue with Google
+</a>
+<a href="<?= site_url('auth/github') ?>" class="btn btn-dark btn-block">
+    <i class="fab fa-github mr-2"></i> Continue with GitHub
+</a>
+
+<hr>
 <p class="text-center">
     Don't have an account? <a href="<?= site_url('register') ?>">Register here</a>
 </p>

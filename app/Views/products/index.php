@@ -1,4 +1,4 @@
-<?= $this->extend('layouts/admin') ?>
+﻿<?= $this->extend('layouts/admin') ?>
 
 <?= $this->section('content') ?>
 
@@ -157,11 +157,18 @@
 
                     <div class="form-group">
                         <label for="categories">Categories</label>
-                        <select name="categories[]" id="categories" class="form-control" multiple>
-                            <?php foreach ($categories ?? [] as $category): ?>
-                                <option value="<?= $category['id'] ?>"><?= esc($category['name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                        <div class="input-group">
+                            <select name="categories[]" id="categories" class="form-control" multiple="multiple">
+                                <?php foreach ($categories ?? [] as $category): ?>
+                                    <option value="<?= $category['id'] ?>"><?= esc($category['name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-info" id="manageCategoriesBtn" title="Manage Categories" onclick="openManageCategoriesFromProductForm()">
+                                    <i class="fas fa-tags"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -265,6 +272,12 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css" crossorigin="anonymous" />
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+<style>
+    /* Allow stacked modals (Product + Manage Categories) */
+    .modal-backdrop.modal-stack {
+        opacity: 0.5;
+    }
+</style>
 <script>
     let table;
     let categories = <?= json_encode($categories ?? []) ?>;
@@ -273,10 +286,38 @@
         table = $('#productsTable').DataTable({
             responsive: true,
             autoWidth: false,
-            order: [[0, 'desc']],
-            columnDefs: [
-                { orderable: false, targets: 9 }
-            ]
+            order: [
+                [0, 'desc']
+            ],
+            columnDefs: [{
+                orderable: false,
+                targets: 9
+            }]
+        });
+
+        // Multi-select categories with Select2 in product modal
+        $('#categories').select2({
+            theme: 'classic',
+            width: '80%',
+            placeholder: 'Select categories',
+            closeOnSelect: false,
+        });
+
+        //initAvailableCategoriesSelect2();
+
+        // Bootstrap modal stacking with z-index
+        $(document).on('show.bs.modal', '.modal', function() {
+            const zIndex = 1040 + (10 * $('.modal.show').length);
+            $(this).css('z-index', zIndex);
+            setTimeout(function() {
+                $('.modal-backdrop').not('.modal-stack').first().css('z-index', zIndex - 1).addClass('modal-stack');
+            }, 0);
+        });
+
+        $(document).on('hidden.bs.modal', '.modal', function() {
+            if ($('.modal.show').length > 0) {
+                $('body').addClass('modal-open');
+            }
         });
 
         // Form submission with AJAX
@@ -309,6 +350,7 @@
         document.getElementById('imagePreview').style.display = 'none';
         document.getElementById('previewImg').src = '';
         document.getElementById('sku').removeAttribute('readonly');
+        $('#categories').val(null).trigger('change');
     }
 
     function editProduct(productId) {
@@ -336,7 +378,7 @@
 
                     // Set categories
                     const categoryIds = data.category_ids || [];
-                    $('#categories').val(categoryIds);
+                    $('#categories').val(categoryIds).trigger('change');
 
                     // Show image preview if exists
                     if (product.image) {
@@ -414,9 +456,26 @@
         }
     }
 
+    function openManageCategoriesFromProductForm() {
+        const productId = document.getElementById('productId').value;
+        const productName = document.getElementById('name').value || 'Product';
+
+        if (!productId) {
+            alert('Save the product first, then manage categories.');
+            return;
+        }
+
+        openCategoriesModal(productId, productName);
+    }
+
     // Global variables for categories modal
     let currentProductCategories = [];
     let allAvailableCategories = [];
+
+    function toCategoryId(value) {
+        const id = parseInt(value, 10);
+        return Number.isNaN(id) ? null : id;
+    }
 
     function openCategoriesModal(productId, productName) {
         document.getElementById('currentProductId').value = productId;
@@ -432,15 +491,20 @@
             dataType: 'json',
             success: function(data) {
                 if (data.success) {
-                    allAvailableCategories = data.all_categories;
-                    currentProductCategories = data.product_categories.map(cat => cat.id);
-                    
+                    allAvailableCategories = data.all_categories.map(category => ({
+                        ...category,
+                        id: toCategoryId(category.id)
+                    }));
+                    currentProductCategories = data.product_categories
+                        .map(cat => toCategoryId(cat.id))
+                        .filter(id => id !== null);
+
                     // Populate current categories
                     populateCurrentCategories();
-                    
+
                     // Populate available categories dropdown
                     populateAvailableCategories();
-                    
+
                     $('#categoriesModal').modal('show');
                 }
             },
@@ -452,7 +516,7 @@
 
     function populateCurrentCategories() {
         const container = document.getElementById('currentCategoriesList');
-        
+
         if (currentProductCategories.length === 0) {
             container.innerHTML = '<p class="text-muted">No categories assigned yet</p>';
             return;
@@ -460,7 +524,7 @@
 
         let html = '<div class="list-group">';
         currentProductCategories.forEach(categoryId => {
-            const category = allAvailableCategories.find(c => c.id === categoryId);
+            const category = allAvailableCategories.find(c => toCategoryId(c.id) === toCategoryId(categoryId));
             if (category) {
                 html += `<div class="list-group-item d-flex justify-content-between align-items-center">
                     <span>${category.name}</span>
@@ -477,27 +541,29 @@
     function populateAvailableCategories() {
         const select = document.getElementById('availableCategories');
         let html = '<option value="">-- Select a category --</option>';
-        
+
         allAvailableCategories.forEach(category => {
+            const categoryId = toCategoryId(category.id);
             // Don't show categories already assigned
-            if (!currentProductCategories.includes(category.id)) {
-                html += `<option value="${category.id}">${category.name}</option>`;
+            if (categoryId !== null && !currentProductCategories.includes(categoryId)) {
+                html += `<option value="${categoryId}">${category.name}</option>`;
             }
         });
-        
+
         select.innerHTML = html;
+        $('#availableCategories').trigger('change.select2');
     }
 
     function addCategoryToProduct() {
-        const categoryId = document.getElementById('availableCategories').value;
-        
-        if (!categoryId) {
+        const categoryId = toCategoryId(document.getElementById('availableCategories').value);
+
+        if (categoryId === null) {
             showCategoryError('Please select a category');
             return;
         }
 
-        if (!currentProductCategories.includes(parseInt(categoryId))) {
-            currentProductCategories.push(parseInt(categoryId));
+        if (!currentProductCategories.includes(categoryId)) {
+            currentProductCategories.push(categoryId);
             populateCurrentCategories();
             populateAvailableCategories();
             document.getElementById('availableCategories').value = '';
@@ -506,7 +572,11 @@
     }
 
     function removeCategoryFromProduct(categoryId) {
-        currentProductCategories = currentProductCategories.filter(id => id !== categoryId);
+        const idToRemove = toCategoryId(categoryId);
+        if (idToRemove === null) {
+            return;
+        }
+        currentProductCategories = currentProductCategories.filter(id => toCategoryId(id) !== idToRemove);
         populateCurrentCategories();
         populateAvailableCategories();
     }
@@ -531,24 +601,26 @@
             },
             success: function(response) {
                 if (response.success) {
+                    const newCategory = {
+                        ...response.category,
+                        id: toCategoryId(response.category.id)
+                    };
+
                     // Add new category to the list
-                    allAvailableCategories.push(response.category);
-                    
-                    // Add to current product categories
-                    currentProductCategories.push(response.category.id);
-                    
+                    allAvailableCategories.push(newCategory);
+
                     // Refresh displays
                     populateCurrentCategories();
                     populateAvailableCategories();
-                    
+
                     // Auto-select the newly created category
-                    document.getElementById('availableCategories').value = response.category.id;
-                    
+                    document.getElementById('availableCategories').value = String(newCategory.id);
+
                     // Clear form
                     document.getElementById('newCategoryName').value = '';
                     document.getElementById('newCategoryDesc').value = '';
                     document.getElementById('categoriesErrors').style.display = 'none';
-                    
+
                     // Show success message
                     alert('Category created successfully!');
                 } else {
@@ -601,5 +673,19 @@
         errorDiv.style.display = 'block';
     }
 
+    function initAvailableCategoriesSelect2() {
+        const $availableCategories = $('#availableCategories');
+        if ($availableCategories.hasClass('select2-hidden-accessible')) {
+            $availableCategories.select2('destroy');
+        }
+
+        $availableCategories.select2({
+            theme: 'bootstrap4',
+            width: '100%',
+            placeholder: '-- Select a category --',
+            allowClear: true,
+            dropdownParent: $('#categoriesModal')
+        });
+    }
 </script>
 <?= $this->endSection() ?>

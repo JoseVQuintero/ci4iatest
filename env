@@ -26,6 +26,12 @@
 # app.forceGlobalSecureRequests = false
 # app.CSPEnabled = false
 
+# OAuth (Google/GitHub)
+# oauth.google.client_id =
+# oauth.google.client_secret =
+# oauth.github.client_id =
+# oauth.github.client_secret =
+
 #--------------------------------------------------------------------
 # DATABASE
 #--------------------------------------------------------------------
