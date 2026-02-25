@@ -680,7 +680,7 @@
         }
 
         $availableCategories.select2({
-            theme: 'bootstrap4',
+            theme: 'classic',
             width: '100%',
             placeholder: '-- Select a category --',
             allowClear: true,
