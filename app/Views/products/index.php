@@ -48,8 +48,8 @@
                             <tr>
                                 <td><?= $product['id'] ?></td>
                                 <td>
-                                    <?php if ($product['image']): ?>
-                                        <img src="<?= site_url('uploads/products/' . $product['image']) ?>" alt="<?= esc($product['name']) ?>" style="max-width: 60px; max-height: 60px; border-radius: 4px;">
+                                    <?php if (!empty($product['has_image'])): ?>
+                                        <img src="<?= site_url('products/' . $product['id'] . '/image') ?>" alt="<?= esc($product['name']) ?>" style="max-width: 60px; max-height: 60px; border-radius: 4px;">
                                     <?php else: ?>
                                         <span class="text-muted">No image</span>
                                     <?php endif; ?>
@@ -381,8 +381,8 @@
                     $('#categories').val(categoryIds).trigger('change');
 
                     // Show image preview if exists
-                    if (product.image) {
-                        document.getElementById('previewImg').src = '<?= site_url('uploads/products') ?>/' + product.image;
+                    if (product.image_url) {
+                        document.getElementById('previewImg').src = product.image_url;
                         document.getElementById('imagePreview').style.display = 'block';
                     } else {
                         document.getElementById('imagePreview').style.display = 'none';

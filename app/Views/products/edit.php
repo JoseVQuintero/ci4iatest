@@ -77,9 +77,9 @@
 
                     <div class="form-group">
                         <label for="image">Product Image</label>
-                        <?php if ($product['image']): ?>
+                        <?php if (!empty($product['image']) || !empty($product['image_data'])): ?>
                             <div class="mb-2">
-                                <img src="<?= site_url('uploads/products/' . $product['image']) ?>" alt="Product" style="max-width: 200px;">
+                                <img src="<?= site_url('products/' . $product['id'] . '/image') ?>" alt="Product" style="max-width: 200px;">
                             </div>
                         <?php endif; ?>
                         <input type="file" name="image" id="image" class="form-control" accept="image/*">

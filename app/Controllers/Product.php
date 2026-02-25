@@ -5,11 +5,13 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\ProductModel;
 use App\Models\CategoryModel;
+use CodeIgniter\HTTP\Files\UploadedFile;
 
 class Product extends BaseController
 {
     protected $productModel;
     protected $categoryModel;
+    private const MAX_IMAGE_SIZE = 5242880; // 5MB
 
     public function __construct()
     {
@@ -20,7 +22,17 @@ class Product extends BaseController
     public function index()
     {
         $userId = session()->get('user_id');
-        $products = $this->productModel->where('user_id', $userId)->findAll();
+        $products = $this->productModel
+            ->select('products.id, products.user_id, products.name, products.slug, products.description, products.sku, products.price, products.offer_price, products.brand, products.type, products.image, products.image_mime, products.stock, products.status, products.created_at, products.updated_at')
+            ->select('CASE WHEN products.image_data IS NULL THEN 0 ELSE 1 END AS has_image_data', false)
+            ->where('user_id', $userId)
+            ->findAll();
+
+        foreach ($products as &$product) {
+            $product['has_image'] = (! empty($product['image']) || (int) ($product['has_image_data'] ?? 0) === 1);
+        }
+        unset($product);
+
         $categories = $this->categoryModel->findAll();
         return view('products/index', [
             'title' => 'Products',
@@ -71,12 +83,16 @@ class Product extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        // Handle image upload
         $image = $this->request->getFile('image');
-        $imageName = null;
-        if ($image && $image->isValid()) {
-            $imageName = $image->getRandomName();
-            $image->move(FCPATH . 'uploads/products/', $imageName);
+        $imagePayload = $this->prepareImageForDatabase($image);
+        if (! empty($imagePayload['error'])) {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'errors' => ['image' => $imagePayload['error']],
+                ]);
+            }
+            return redirect()->back()->withInput()->with('errors', ['image' => $imagePayload['error']]);
         }
 
         // Create slug from name
@@ -92,7 +108,9 @@ class Product extends BaseController
             'description' => $description,
             'brand'       => $brand,
             'type'        => $type,
-            'image'       => $imageName,
+            'image'       => null,
+            'image_data'  => $imagePayload['data'],
+            'image_mime'  => $imagePayload['mime'],
             'stock'       => $stock,
             'status'      => $status,
         ];
@@ -145,6 +163,9 @@ class Product extends BaseController
         $categoryIds = array_column($productCategories, 'id');
 
         if ($this->request->isAJAX()) {
+            $imageUrl = $this->getProductImageUrl($product);
+            unset($product['image_data']);
+            $product['image_url'] = $imageUrl;
             return $this->response->setJSON([
                 'success' => true,
                 'product' => $product,
@@ -205,14 +226,16 @@ class Product extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $imageName = $product['image'];
         $image = $this->request->getFile('image');
-        if ($image && $image->isValid()) {
-            if ($imageName && file_exists(FCPATH . 'uploads/products/' . $imageName)) {
-                unlink(FCPATH . 'uploads/products/' . $imageName);
+        $imagePayload = $this->prepareImageForDatabase($image);
+        if (! empty($imagePayload['error'])) {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'errors' => ['image' => $imagePayload['error']],
+                ]);
             }
-            $imageName = $image->getRandomName();
-            $image->move(FCPATH . 'uploads/products/', $imageName);
+            return redirect()->back()->withInput()->with('errors', ['image' => $imagePayload['error']]);
         }
 
         $slug = url_title($name, '-', true);
@@ -225,10 +248,18 @@ class Product extends BaseController
             'description' => $description,
             'brand'       => $brand,
             'type'        => $type,
-            'image'       => $imageName,
             'stock'       => $stock,
             'status'      => $status,
         ];
+
+        if ($imagePayload['hasUpload']) {
+            if (! empty($product['image']) && file_exists(FCPATH . 'uploads/products/' . $product['image'])) {
+                unlink(FCPATH . 'uploads/products/' . $product['image']);
+            }
+            $updateData['image'] = null;
+            $updateData['image_data'] = $imagePayload['data'];
+            $updateData['image_mime'] = $imagePayload['mime'];
+        }
 
         if (! $this->productModel->update($id, $updateData)) {
             $errors = $this->productModel->errors() ?: ['Unable to update product.'];
@@ -278,5 +309,86 @@ class Product extends BaseController
         $this->productModel->delete($id);
 
         return redirect()->to('products')->with('success', 'Product deleted successfully');
+    }
+
+    public function image($id)
+    {
+        $userId = session()->get('user_id');
+        $product = $this->productModel->where('id', $id)->where('user_id', $userId)->first();
+        if (! $product) {
+            return $this->response->setStatusCode(404);
+        }
+
+        if (! empty($product['image_data'])) {
+            $mime = ! empty($product['image_mime']) ? $product['image_mime'] : 'application/octet-stream';
+            return $this->response
+                ->setHeader('Content-Type', $mime)
+                ->setBody($product['image_data']);
+        }
+
+        if (! empty($product['image'])) {
+            $path = FCPATH . 'uploads/products/' . $product['image'];
+            if (is_file($path)) {
+                $mime = mime_content_type($path) ?: 'application/octet-stream';
+                return $this->response
+                    ->setHeader('Content-Type', $mime)
+                    ->setBody((string) file_get_contents($path));
+            }
+        }
+
+        return $this->response->setStatusCode(404);
+    }
+
+    private function prepareImageForDatabase(?UploadedFile $image): array
+    {
+        $result = [
+            'hasUpload' => false,
+            'data' => null,
+            'mime' => null,
+            'error' => null,
+        ];
+
+        if (! $image || $image->getError() === UPLOAD_ERR_NO_FILE) {
+            return $result;
+        }
+
+        if (! $image->isValid()) {
+            $result['error'] = $image->getErrorString();
+            return $result;
+        }
+
+        if ($image->getSize() > self::MAX_IMAGE_SIZE) {
+            $result['error'] = 'Image exceeds maximum size of 5MB';
+            return $result;
+        }
+
+        $mime = $image->getMimeType();
+        $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (! in_array($mime, $allowed, true)) {
+            $result['error'] = 'Invalid image format. Allowed: JPG, PNG, GIF, WEBP';
+            return $result;
+        }
+
+        $tempPath = $image->getTempName();
+        $content = @file_get_contents($tempPath);
+        if ($content === false) {
+            $result['error'] = 'Unable to read uploaded image';
+            return $result;
+        }
+
+        $result['hasUpload'] = true;
+        $result['data'] = $content;
+        $result['mime'] = $mime;
+
+        return $result;
+    }
+
+    private function getProductImageUrl(array $product): ?string
+    {
+        if (! empty($product['image_data']) || ! empty($product['image'])) {
+            return site_url('products/' . $product['id'] . '/image');
+        }
+
+        return null;
     }
 }

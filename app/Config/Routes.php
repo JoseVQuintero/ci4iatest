@@ -53,6 +53,7 @@ $routes->get('dashboard/(:any)', 'Dashboard::$1', ['filter' => 'auth']);
 $routes->get('products', 'Product::index', ['filter' => 'auth']);
 $routes->get('products/create', 'Product::create', ['filter' => 'auth']);
 $routes->post('products/store', 'Product::store', ['filter' => 'auth']);
+$routes->get('products/(:num)/image', 'Product::image/$1', ['filter' => 'auth']);
 $routes->get('products/(:num)/edit', 'Product::edit/$1', ['filter' => 'auth']);
 $routes->post('products/(:num)/update', 'Product::update/$1', ['filter' => 'auth']);
 $routes->get('products/(:num)/delete', 'Product::delete/$1', ['filter' => 'auth']);

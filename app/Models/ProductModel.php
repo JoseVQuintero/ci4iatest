@@ -21,6 +21,8 @@ class ProductModel extends Model
         'brand',
         'type',
         'image',
+        'image_data',
+        'image_mime',
         'stock',
         'status',
     ];
