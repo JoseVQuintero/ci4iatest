@@ -1,4 +1,9 @@
-# CI4 with IA - Sistema de Gestión de Productos
+﻿# CI4 with IA - Sistema de Gestión de Productos
+
+## Sitio en Producción
+
+- URL: https://ci4ia-7148b88079cd.herokuapp.com
+
 
 Un sistema completo de gestión de productos con autenticación de usuarios, categorías dinámicas, carga de imágenes y administración de inventario. Construido con **CodeIgniter 4**, **AdminLTE**, **Bootstrap 4** y **DataTables**.
 
@@ -458,3 +463,5 @@ Este proyecto demuestra cómo:
 **Desarrollado con ❤️ y mucho café** ☕
 
 Hecho por: **CodeIgniter 4 + IA**
+
+
