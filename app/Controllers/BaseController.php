@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\UserModel;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -35,7 +36,7 @@ abstract class BaseController extends Controller
      *
      * @var list<string>
      */
-    protected $helpers = ['url'];
+    protected $helpers = ['url', 'access'];
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
@@ -57,6 +58,15 @@ abstract class BaseController extends Controller
         $session = session();
         $locale = $session->get('site_locale');
         $supportedLocales = config('App')->supportedLocales;
+
+        // Ensure role is always present in session for menu/authorization checks.
+        if ($session->get('user_id') && ! $session->has('user_role')) {
+            $user = (new UserModel())->find((int) $session->get('user_id'));
+            if ($user) {
+                $session->set('user_role', $user['role'] ?? 'user');
+                $session->set('user_name', $user['name'] ?? $session->get('user_name'));
+            }
+        }
 
         if (is_string($locale) && in_array($locale, $supportedLocales, true)) {
             $request->setLocale($locale);

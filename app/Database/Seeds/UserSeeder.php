@@ -12,6 +12,7 @@ class UserSeeder extends Seeder
             'name'          => 'Admin User',
             'email'         => 'admin@example.com',
             'password_hash' => password_hash('password123', PASSWORD_DEFAULT),
+            'role'          => 'admin',
         ];
 
         // Using query() for simplicity

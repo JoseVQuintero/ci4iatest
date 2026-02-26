@@ -23,7 +23,7 @@ $routes->setDefaultController('Home');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
-$routes->setAutoRoute(true);
+$routes->setAutoRoute(false);
 
 /**
  * --------------------------------------------------------------------
@@ -47,22 +47,38 @@ $routes->get('auth/github/callback', 'Auth::socialCallback/github');
 $routes->get('lang/(:segment)', 'Language::switch/$1');
 
 // Protected routes (require auth filter)
-$routes->get('dashboard', 'Dashboard::index', ['filter' => 'auth']);
-$routes->get('dashboard/(:any)', 'Dashboard::$1', ['filter' => 'auth']);
+$routes->get('dashboard', 'Dashboard::index', ['filter' => 'module:dashboard']);
+$routes->get('dashboard/(:any)', 'Dashboard::$1', ['filter' => 'module:dashboard']);
 
 // Product CRUD routes (protected)
-$routes->get('products', 'Product::index', ['filter' => 'auth']);
-$routes->get('products/create', 'Product::create', ['filter' => 'auth']);
-$routes->post('products/store', 'Product::store', ['filter' => 'auth']);
-$routes->get('products/(:num)/image', 'Product::image/$1', ['filter' => 'auth']);
-$routes->get('products/(:num)/edit', 'Product::edit/$1', ['filter' => 'auth']);
-$routes->post('products/(:num)/update', 'Product::update/$1', ['filter' => 'auth']);
-$routes->get('products/(:num)/delete', 'Product::delete/$1', ['filter' => 'auth']);
+$routes->get('products', 'Product::index', ['filter' => 'module:products']);
+$routes->get('products/create', 'Product::create', ['filter' => 'module:products']);
+$routes->post('products/store', 'Product::store', ['filter' => 'module:products']);
+$routes->get('products/(:num)/image', 'Product::image/$1', ['filter' => 'module:products']);
+$routes->get('products/(:num)/edit', 'Product::edit/$1', ['filter' => 'module:products']);
+$routes->post('products/(:num)/update', 'Product::update/$1', ['filter' => 'module:products']);
+$routes->get('products/(:num)/delete', 'Product::delete/$1', ['filter' => 'module:products']);
 
 // Category routes (protected)
-$routes->post('categories/store', 'Category::store', ['filter' => 'auth']);
-$routes->get('products/(:num)/categories', 'Category::getProductCategories/$1', ['filter' => 'auth']);
-$routes->post('products/(:num)/categories/update', 'Category::updateProductCategories/$1', ['filter' => 'auth']);
+$routes->post('categories/store', 'Category::store', ['filter' => 'module:products']);
+$routes->get('products/(:num)/categories', 'Category::getProductCategories/$1', ['filter' => 'module:products']);
+$routes->post('products/(:num)/categories/update', 'Category::updateProductCategories/$1', ['filter' => 'module:products']);
+
+// User CRUD routes (admin only)
+$routes->get('users', 'User::index', ['filter' => 'module:users']);
+$routes->get('users/create', 'User::create', ['filter' => 'module:users']);
+$routes->post('users/store', 'User::store', ['filter' => 'module:users']);
+$routes->get('users/(:num)/edit', 'User::edit/$1', ['filter' => 'module:users']);
+$routes->post('users/(:num)/update', 'User::update/$1', ['filter' => 'module:users']);
+$routes->get('users/(:num)/delete', 'User::delete/$1', ['filter' => 'module:users']);
+
+// Role CRUD routes (admin role module)
+$routes->get('roles', 'Role::index', ['filter' => 'module:roles']);
+$routes->get('roles/create', 'Role::create', ['filter' => 'module:roles']);
+$routes->post('roles/store', 'Role::store', ['filter' => 'module:roles']);
+$routes->get('roles/(:num)/edit', 'Role::edit/$1', ['filter' => 'module:roles']);
+$routes->post('roles/(:num)/update', 'Role::update/$1', ['filter' => 'module:roles']);
+$routes->get('roles/(:num)/delete', 'Role::delete/$1', ['filter' => 'module:roles']);
 
 /**
  * --------------------------------------------------------------------

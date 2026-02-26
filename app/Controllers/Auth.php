@@ -52,6 +52,7 @@ class Auth extends BaseController
             'name'          => $name,
             'email'         => $email,
             'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+            'role'          => 'user',
         ];
 
         if (! $this->userModel->skipValidation(true)->save($saveData)) {
@@ -68,6 +69,7 @@ class Auth extends BaseController
         $user = $this->userModel->where('email', $email)->first();
         $this->session->set('user_id', $user['id']);
         $this->session->set('user_name', $user['name']);
+        $this->session->set('user_role', $user['role'] ?? 'user');
 
         return redirect()->to('/dashboard');
     }
@@ -89,6 +91,7 @@ class Auth extends BaseController
 
         $this->session->set('user_id', $user['id']);
         $this->session->set('user_name', $user['name']);
+        $this->session->set('user_role', $user['role'] ?? 'user');
 
         return redirect()->to('/dashboard');
     }
@@ -184,6 +187,7 @@ class Auth extends BaseController
                 'name' => $profile['name'] ?: $profile['email'],
                 'email' => $profile['email'],
                 'password_hash' => password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT),
+                'role' => 'user',
                 'avatar' => $profile['avatar'],
             ];
             if ($provider === 'google') {
@@ -217,6 +221,7 @@ class Auth extends BaseController
 
         $this->session->set('user_id', $user['id']);
         $this->session->set('user_name', $user['name']);
+        $this->session->set('user_role', $user['role'] ?? 'user');
 
         return redirect()->to('/dashboard');
     }

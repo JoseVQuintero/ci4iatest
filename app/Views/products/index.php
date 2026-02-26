@@ -28,68 +28,70 @@
                     </div>
                 <?php endif; ?>
 
-                <table id="productsTable" class="table table-sm table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th><?= esc(lang('App.image')) ?></th>
-                            <th><?= esc(lang('App.name')) ?></th>
-                            <th>SKU</th>
-                            <th><?= esc(lang('App.brand')) ?></th>
-                            <th><?= esc(lang('App.price')) ?></th>
-                            <th><?= esc(lang('App.offer_price')) ?></th>
-                            <th><?= esc(lang('App.stock')) ?></th>
-                            <th><?= esc(lang('App.status')) ?></th>
-                            <th style="width: 200px;"><?= esc(lang('App.actions')) ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($products as $product): ?>
+                <div class="table-responsive products-table-wrap">
+                    <table id="productsTable" class="table table-sm table-striped table-hover">
+                        <thead>
                             <tr>
-                                <td><?= $product['id'] ?></td>
-                                <td>
-                                    <?php if (!empty($product['has_image'])): ?>
-                                        <img src="<?= site_url('products/' . $product['id'] . '/image') ?>" alt="<?= esc($product['name']) ?>" style="max-width: 60px; max-height: 60px; border-radius: 4px;">
-                                    <?php else: ?>
-                                        <span class="text-muted"><?= esc(lang('App.no_image')) ?></span>
-                                    <?php endif; ?>
-                                </td>
-                                <td><?= esc($product['name']) ?></td>
-                                <td><?= esc($product['sku']) ?></td>
-                                <td><?= esc($product['brand'] ?? '-') ?></td>
-                                <td>$<?= number_format($product['price'], 2) ?></td>
-                                <td>
-                                    <?php if ($product['offer_price']): ?>
-                                        $<?= number_format($product['offer_price'], 2) ?>
-                                    <?php else: ?>
-                                        -
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <span class="badge badge-<?= $product['stock'] > 0 ? 'success' : 'danger' ?>">
-                                        <?= $product['stock'] ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge badge-<?= $product['status'] === 'active' ? 'success' : 'warning' ?>">
-                                        <?= esc($product['status'] === 'active' ? lang('App.active') : lang('App.inactive')) ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-xs btn-info" onclick="openCategoriesModal(<?= $product['id'] ?>, '<?= esc($product['name']) ?>')">
-                                        <i class="fas fa-tags"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-xs btn-warning" onclick="editProduct(<?= $product['id'] ?>)">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-xs btn-danger" onclick="deleteProduct(<?= $product['id'] ?>)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
+                                <th>#</th>
+                                <th><?= esc(lang('App.image')) ?></th>
+                                <th><?= esc(lang('App.name')) ?></th>
+                                <th>SKU</th>
+                                <th><?= esc(lang('App.brand')) ?></th>
+                                <th><?= esc(lang('App.price')) ?></th>
+                                <th><?= esc(lang('App.offer_price')) ?></th>
+                                <th><?= esc(lang('App.stock')) ?></th>
+                                <th><?= esc(lang('App.status')) ?></th>
+                                <th style="width: 200px;"><?= esc(lang('App.actions')) ?></th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($products as $product): ?>
+                                <tr>
+                                    <td><?= $product['id'] ?></td>
+                                    <td>
+                                        <?php if (!empty($product['has_image'])): ?>
+                                            <img src="<?= site_url('products/' . $product['id'] . '/image') ?>" alt="<?= esc($product['name']) ?>" style="max-width: 60px; max-height: 60px; border-radius: 4px;">
+                                        <?php else: ?>
+                                            <span class="text-muted"><?= esc(lang('App.no_image')) ?></span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?= esc($product['name']) ?></td>
+                                    <td><?= esc($product['sku']) ?></td>
+                                    <td><?= esc($product['brand'] ?? '-') ?></td>
+                                    <td>$<?= number_format($product['price'], 2) ?></td>
+                                    <td>
+                                        <?php if ($product['offer_price']): ?>
+                                            $<?= number_format($product['offer_price'], 2) ?>
+                                        <?php else: ?>
+                                            -
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-<?= $product['stock'] > 0 ? 'success' : 'danger' ?>">
+                                            <?= $product['stock'] ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-<?= $product['status'] === 'active' ? 'success' : 'warning' ?>">
+                                            <?= esc($product['status'] === 'active' ? lang('App.active') : lang('App.inactive')) ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-xs btn-info" onclick="openCategoriesModal(<?= $product['id'] ?>, '<?= esc($product['name']) ?>')">
+                                            <i class="fas fa-tags"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-warning" onclick="editProduct(<?= $product['id'] ?>)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-danger" onclick="deleteProduct(<?= $product['id'] ?>)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -273,6 +275,39 @@
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
 <style>
+    .products-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #productsTable {
+        width: 100% !important;
+    }
+
+    .dataTables_wrapper {
+        width: 100%;
+    }
+
+    .dataTables_wrapper .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .dataTables_wrapper .col-sm-12 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    @media (max-width: 767.98px) {
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            text-align: left !important;
+        }
+    }
+
     /* Allow stacked modals (Product + Manage Categories) */
     .modal-backdrop.modal-stack {
         opacity: 0.5;
@@ -317,6 +352,16 @@
                 targets: 9
             }]
         });
+
+        const syncTableLayout = () => {
+            if (!table) {
+                return;
+            }
+            table.columns.adjust();
+            table.responsive.recalc();
+        };
+        $(window).on('resize orientationchange', syncTableLayout);
+        setTimeout(syncTableLayout, 50);
 
         // Multi-select categories with Select2 in product modal
         $('#categories').select2({

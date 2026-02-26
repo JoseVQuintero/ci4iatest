@@ -3,6 +3,9 @@
 $currentLocale = service('request')->getLocale();
 $switchLocale = $currentLocale === 'es-MX' ? 'en' : 'es-MX';
 $switchLabel = $currentLocale === 'es-MX' ? 'EN' : 'ES-MX';
+$modules = app_modules();
+$visibleModules = current_user_visible_modules();
+$firstSegment = service('request')->getUri()->getSegment(1);
 ?>
 <html lang="<?= esc($currentLocale) ?>">
 <head>
@@ -182,6 +185,11 @@ $switchLabel = $currentLocale === 'es-MX' ? 'EN' : 'ES-MX';
                     <span class="nav-link"><?= esc(lang('App.hello_user', [session()->get('user_name')])) ?></span>
                 </li>
                 <li class="nav-item">
+                    <span class="nav-link">
+                        <span class="badge badge-info"><?= esc(strtoupper((string) session()->get('user_role'))) ?></span>
+                    </span>
+                </li>
+                <li class="nav-item">
                     <a href="<?= site_url('logout') ?>" class="nav-link"><?= esc(lang('App.logout')) ?></a>
                 </li>
             <?php else: ?>
@@ -207,18 +215,22 @@ $switchLabel = $currentLocale === 'es-MX' ? 'EN' : 'ES-MX';
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
-                    <li class="nav-item">
-                        <a href="<?= site_url('dashboard') ?>" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
-                            <p><?= esc(lang('App.dashboard')) ?></p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?= site_url('products') ?>" class="nav-link">
-                            <i class="nav-icon fas fa-box"></i>
-                            <p><?= esc(lang('App.products')) ?></p>
-                        </a>
-                    </li>
+                    <?php foreach ($modules as $moduleKey => $module): ?>
+                        <?php if (! in_array($moduleKey, $visibleModules, true)): ?>
+                            <?php continue; ?>
+                        <?php endif; ?>
+                        <?php
+                            $moduleRoute = (string) $module['route'];
+                            $moduleSegment = explode('/', $moduleRoute)[0];
+                            $isActive = $firstSegment === $moduleSegment || ($moduleSegment === 'dashboard' && ($firstSegment === '' || $firstSegment === null));
+                        ?>
+                        <li class="nav-item">
+                            <a href="<?= site_url($moduleRoute) ?>" class="nav-link <?= $isActive ? 'active' : '' ?>">
+                                <i class="nav-icon <?= esc((string) $module['icon']) ?>"></i>
+                                <p><?= esc(lang((string) $module['label'])) ?></p>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->
@@ -243,6 +255,18 @@ $switchLabel = $currentLocale === 'es-MX' ? 'EN' : 'ES-MX';
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
+                <?php if (session()->getFlashdata('success')): ?>
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <?= esc(session()->getFlashdata('success')) ?>
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    </div>
+                <?php endif; ?>
+                <?php if (session()->getFlashdata('error')): ?>
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <?= esc(session()->getFlashdata('error')) ?>
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    </div>
+                <?php endif; ?>
                 <?= $this->renderSection('content') ?>
             </div>
         </section>
